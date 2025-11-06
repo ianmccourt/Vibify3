@@ -1,0 +1,115 @@
+/* Record Player Animations */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vinyl-spinning {
+  animation: spin 3s linear infinite;
+}
+
+.vinyl-paused {
+  animation: none;
+}
+
+/* Tonearm animations */
+@keyframes tonearmDown {
+  from {
+    transform: rotate(-20deg);
+    transform-origin: top left;
+  }
+  to {
+    transform: rotate(0deg);
+    transform-origin: top left;
+  }
+}
+
+@keyframes tonearmUp {
+  from {
+    transform: rotate(0deg);
+    transform-origin: top left;
+  }
+  to {
+    transform: rotate(-20deg);
+    transform-origin: top left;
+  }
+}
+
+.tonearm-playing {
+  animation: tonearmDown 0.5s ease-out forwards;
+}
+
+.tonearm-stopped {
+  animation: tonearmUp 0.5s ease-out forwards;
+}
+
+/* Vinyl glow effect when playing */
+.vinyl-glow {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.vinyl-glow-active {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(255, 200, 100, 0.3);
+}
+
+/* Record player base styling */
+.record-player-base {
+  background: linear-gradient(135deg, #5d4e37 0%, #4a3f2e 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+    0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Platter (where vinyl sits) */
+.platter {
+  background: radial-gradient(circle, #2a2a2a 0%, #1a1a1a 100%);
+  box-shadow:
+    0 0 0 2px #333,
+    0 0 0 4px #1a1a1a,
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Center spindle */
+.spindle {
+  background: linear-gradient(135deg, #999 0%, #666 100%);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Album artwork rotation */
+.album-art-rotating {
+  animation: spin 3s linear infinite;
+}
+
+/* Pulse animation for active playback */
+@keyframes subtlePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.playing-pulse {
+  animation: subtlePulse 2s ease-in-out infinite;
+}
