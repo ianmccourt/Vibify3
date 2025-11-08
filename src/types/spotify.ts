@@ -26,6 +26,7 @@ export interface SpotifyAlbum {
   images: Array<{ url: string; height: number; width: number }>;
   release_date: string;
   uri: string;
+  total_tracks?: number;
 }
 
 export interface SpotifyPlaylist {
@@ -48,6 +49,9 @@ export interface SpotifyArtist {
   images: Array<{ url: string }>;
   genres: string[];
   uri: string;
+  followers?: {
+    total: number;
+  };
 }
 
 export interface PlaybackState {

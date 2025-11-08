@@ -167,3 +167,111 @@ html {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+.glass-glow {
+  background: rgba(138, 43, 226, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(138, 43, 226, 0.2);
+}
+
+/* Scrollbar hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Bounce in animation */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-bounceIn {
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Neon glow effect */
+@keyframes neon-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(138, 43, 226, 0.5),
+                0 0 10px rgba(138, 43, 226, 0.4),
+                0 0 20px rgba(138, 43, 226, 0.3),
+                0 0 30px rgba(138, 43, 226, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(138, 43, 226, 0.6),
+                0 0 20px rgba(138, 43, 226, 0.5),
+                0 0 30px rgba(138, 43, 226, 0.4),
+                0 0 40px rgba(138, 43, 226, 0.3);
+  }
+}
+
+.neon-glow {
+  animation: neon-glow 2s ease-in-out infinite;
+}
