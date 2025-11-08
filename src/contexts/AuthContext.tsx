@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { SpotifyUser, AuthTokens } from '../types/spotify';
 import {
   getStoredTokens,
@@ -59,6 +59,35 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  // Define callbacks first
+  const login = () => {
+    // This will be handled by the SpotifyAuth component
+    // Just update the state after successful auth
+  };
+
+  const logout = useCallback(() => {
+    clearTokens();
+    setUser(null);
+    setAccessToken(null);
+  }, []);
+
+  const refreshToken = useCallback(async () => {
+    const tokens = getStoredTokens();
+    if (!tokens?.refresh_token) {
+      logout();
+      return;
+    }
+
+    try {
+      const newTokens = await refreshAccessToken(tokens.refresh_token);
+      storeTokens(newTokens);
+      setAccessToken(newTokens.access_token);
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
+      logout();
+    }
+  }, [logout]);
+
   // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
@@ -88,35 +117,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, refreshTime);
 
     return () => clearTimeout(timeout);
-  }, [accessToken]);
-
-  const login = () => {
-    // This will be handled by the SpotifyAuth component
-    // Just update the state after successful auth
-  };
-
-  const logout = () => {
-    clearTokens();
-    setUser(null);
-    setAccessToken(null);
-  };
-
-  const refreshToken = async () => {
-    const tokens = getStoredTokens();
-    if (!tokens?.refresh_token) {
-      logout();
-      return;
-    }
-
-    try {
-      const newTokens = await refreshAccessToken(tokens.refresh_token);
-      storeTokens(newTokens);
-      setAccessToken(newTokens.access_token);
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-      logout();
-    }
-  };
+  }, [accessToken, refreshToken]);
 
   const value: AuthContextType = {
     user,

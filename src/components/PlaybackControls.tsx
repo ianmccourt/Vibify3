@@ -152,7 +152,7 @@ export function PlaybackControls({
                 onTouchEnd={handleSeekEnd}
                 className="flex-1 h-1 bg-white/20 rounded-full appearance-none cursor-pointer"
                 style={{
-                  background: `linear-gradient(to right, #fff ${(position / duration) * 100}%, rgba(255,255,255,0.2) ${(position / duration) * 100}%)`,
+                  background: `linear-gradient(to right, #fff ${duration > 0 ? (position / duration) * 100 : 0}%, rgba(255,255,255,0.2) ${duration > 0 ? (position / duration) * 100 : 0}%)`,
                 }}
               />
               <span className="text-white/60 text-xs w-10">{formatTime(duration)}</span>

@@ -31,6 +31,11 @@ export function Recommendations({ onPlayTrack }: RecommendationsProps) {
       const seedArtists = topArtists.slice(0, 2).map((a) => a.id);
       const seedTracks = topTracks.slice(0, 3).map((t) => t.id);
 
+      // Spotify API requires at least one seed
+      // If user has no listening history, use popular genres as fallback
+      const hasSeeds = seedArtists.length > 0 || seedTracks.length > 0;
+      const seedGenres = !hasSeeds ? ['pop', 'rock', 'indie'] : undefined;
+
       // Calculate target popularity based on slider
       let targetPopularity: number;
       let minPopularity: number;
@@ -54,8 +59,9 @@ export function Recommendations({ onPlayTrack }: RecommendationsProps) {
       }
 
       const recs = await getRecommendations({
-        seed_artists: seedArtists,
-        seed_tracks: seedTracks,
+        seed_artists: seedArtists.length > 0 ? seedArtists : undefined,
+        seed_tracks: seedTracks.length > 0 ? seedTracks : undefined,
+        seed_genres: seedGenres,
         target_popularity: targetPopularity,
         min_popularity: minPopularity,
         max_popularity: maxPopularity,

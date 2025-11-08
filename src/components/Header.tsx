@@ -33,7 +33,7 @@ export function Header({ onSettingsClick }: HeaderProps) {
               >
                 {user.images?.[0]?.url ? (
                   <img
-                    src={user.images[0].url}
+                    src={user.images[0]?.url}
                     alt={user.display_name}
                     className="w-10 h-10 rounded-full border-2 border-white/20"
                   />
