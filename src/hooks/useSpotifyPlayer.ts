@@ -66,28 +66,46 @@ export function useSpotifyPlayer() {
         setDeviceId(device_id);
         setIsReady(true);
         setError(null);
-        
-        // Wait a bit for device to register with Spotify servers
+
+        // Wait for device to register with Spotify servers
+        console.log('Waiting for device to register with Spotify servers...');
         await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Transfer playback to this device to activate it
+
+        // Try to activate device by transferring playback
         try {
           const { transferPlayback, getAvailableDevices } = await import('../services/spotifyApi');
-          
-          // Check if device is available
-          const devices = await getAvailableDevices();
-          const ourDevice = devices.find(d => d.id === device_id);
-          
+
+          // Retry logic to check if device is available (it may take a moment to register)
+          let ourDevice = null;
+          let attempts = 0;
+          const maxAttempts = 3;
+
+          while (!ourDevice && attempts < maxAttempts) {
+            const devices = await getAvailableDevices();
+            console.log(`Device check attempt ${attempts + 1}/${maxAttempts}:`,
+              devices.map(d => ({ id: d.id, name: d.name, is_active: d.is_active })));
+
+            ourDevice = devices.find(d => d.id === device_id);
+
+            if (!ourDevice && attempts < maxAttempts - 1) {
+              console.log('Device not found yet, waiting...');
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            attempts++;
+          }
+
           if (ourDevice) {
-            console.log('Device found in available devices, transferring playback...');
+            console.log('✓ Device found in available devices:', ourDevice.name);
+            console.log('Transferring playback to activate device...');
             await transferPlayback(device_id, false);
-            console.log('✓ Playback transferred to Vibify player');
+            console.log('✓ Playback transferred - Vibify player is ready to use!');
           } else {
-            console.log('Device not yet registered with Spotify. It will be activated on first play.');
+            console.log('Device not yet registered with Spotify. It will be activated automatically when you play a song.');
           }
         } catch (err) {
           console.warn('Could not transfer playback automatically:', err);
-          console.log('Device will be activated on first play.');
+          console.log('Device will be activated automatically when you play a song.');
           // Don't set error, as manual play will trigger transfer
         }
       });
