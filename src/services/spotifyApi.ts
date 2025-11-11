@@ -74,43 +74,71 @@ export async function play(
     body.uris = uris;
   }
 
-  try {
+  // Helper function to attempt playback
+  const attemptPlay = async () => {
     await fetchWithAuth(`/me/player/play?device_id=${deviceId}`, {
       method: 'PUT',
       body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
     });
+  };
+
+  try {
+    await attemptPlay();
   } catch (error: any) {
-    // If device not found, try transferring playback first
-    if (error.message?.includes('404') || error.message?.includes('Device not found')) {
-      console.log('Device not active, checking available devices...');
-      
+    const errorMessage = error.message?.toLowerCase() || '';
+
+    // Check for various device-not-active error messages
+    const isDeviceError =
+      errorMessage.includes('404') ||
+      errorMessage.includes('device not found') ||
+      errorMessage.includes('not available') ||
+      errorMessage.includes('no active device') ||
+      errorMessage.includes('player command failed') ||
+      errorMessage.includes('restriction');
+
+    if (isDeviceError) {
+      console.log('Device not active, attempting to activate device...');
+
       try {
         // Check if device is available
         const devices = await getAvailableDevices();
+        console.log('Available devices:', devices.map(d => ({ id: d.id, name: d.name, is_active: d.is_active })));
+
         const ourDevice = devices.find(d => d.id === deviceId);
-        
+
         if (!ourDevice) {
           throw new Error('Vibify player not found in available devices. Please refresh the page and try again.');
         }
-        
-        console.log('Device found, transferring playback...');
+
+        console.log('Device found:', ourDevice.name, '- Transferring playback...');
+
+        // Transfer playback to activate the device
         await transferPlayback(deviceId, false);
-        
+
         // Wait for transfer to complete
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
+        console.log('Waiting for playback transfer to complete...');
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
         // Retry play
-        await fetchWithAuth(`/me/player/play?device_id=${deviceId}`, {
-          method: 'PUT',
-          body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
-        });
+        console.log('Retrying playback on activated device...');
+        await attemptPlay();
+        console.log('✓ Playback started successfully after device activation');
       } catch (transferError: any) {
+        console.error('Error during device activation and retry:', transferError);
+
         if (transferError.message?.includes('404')) {
           throw new Error('Player not ready. Please wait a few seconds and try again, or refresh the page.');
         }
-        throw transferError;
+
+        if (transferError.message?.includes('Premium required')) {
+          throw new Error('Spotify Premium is required for playback.');
+        }
+
+        throw new Error(transferError.message || 'Failed to activate player. Please try again or refresh the page.');
       }
     } else {
+      // For non-device errors, throw the original error
+      console.error('Playback error (non-device):', error);
       throw error;
     }
   }
