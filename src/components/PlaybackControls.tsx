@@ -82,8 +82,9 @@ export function PlaybackControls({
       <div className="fixed bottom-0 left-0 right-0 glass-dark border-t border-white/10">
         <div className="max-w-screen-2xl mx-auto px-6 py-4">
           <div className="text-center text-white/60">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white/60 mx-auto mb-2"></div>
-            <p>Initializing player...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-400 mx-auto mb-2"></div>
+            <p className="font-semibold">Initializing Vibify Player...</p>
+            <p className="text-xs mt-1">Connecting to Spotify servers</p>
           </div>
         </div>
       </div>
@@ -94,8 +95,12 @@ export function PlaybackControls({
     return (
       <div className="fixed bottom-0 left-0 right-0 glass-dark border-t border-white/10">
         <div className="max-w-screen-2xl mx-auto px-6 py-4">
-          <div className="text-center text-white/60">
-            <p>No track playing. Select a song to start!</p>
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              <p className="text-white/80 font-medium">Player Ready</p>
+            </div>
+            <p className="text-white/40 text-sm mt-1">Click on a song, album, or playlist to start playing</p>
           </div>
         </div>
       </div>

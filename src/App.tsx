@@ -43,18 +43,29 @@ function AppContent() {
   // Play a track/album
   const handlePlay = async (uri: string) => {
     if (!deviceId) {
-      console.error('No device ID available');
+      console.error('No device ID available - player may still be initializing');
+      return;
+    }
+
+    if (!isReady) {
+      console.error('Player not ready yet');
       return;
     }
 
     try {
+      console.log('Playing:', uri);
       if (uri.includes('album') || uri.includes('playlist')) {
         await play(deviceId, uri);
       } else {
         await play(deviceId, undefined, [uri]);
       }
+      console.log('Playback started successfully');
     } catch (error) {
       console.error('Failed to play:', error);
+      // Show user-friendly error
+      if (error instanceof Error) {
+        alert(`Playback failed: ${error.message}\n\nTry:\n1. Close other Spotify apps/tabs\n2. Refresh the page\n3. Re-login to Spotify`);
+      }
     }
   };
 

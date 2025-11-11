@@ -39,6 +39,23 @@ export async function getCurrentUser(): Promise<SpotifyUser> {
   return fetchWithAuth('/me');
 }
 
+// Get available devices
+export async function getAvailableDevices(): Promise<any[]> {
+  const data = await fetchWithAuth('/me/player/devices');
+  return data.devices;
+}
+
+// Transfer playback to device
+export async function transferPlayback(deviceId: string, play: boolean = false): Promise<void> {
+  await fetchWithAuth('/me/player', {
+    method: 'PUT',
+    body: JSON.stringify({
+      device_ids: [deviceId],
+      play,
+    }),
+  });
+}
+
 // Playback API
 export async function play(
   deviceId: string,
@@ -57,10 +74,46 @@ export async function play(
     body.uris = uris;
   }
 
-  await fetchWithAuth(`/me/player/play?device_id=${deviceId}`, {
-    method: 'PUT',
-    body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
-  });
+  try {
+    await fetchWithAuth(`/me/player/play?device_id=${deviceId}`, {
+      method: 'PUT',
+      body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
+    });
+  } catch (error: any) {
+    // If device not found, try transferring playback first
+    if (error.message?.includes('404') || error.message?.includes('Device not found')) {
+      console.log('Device not active, checking available devices...');
+      
+      try {
+        // Check if device is available
+        const devices = await getAvailableDevices();
+        const ourDevice = devices.find(d => d.id === deviceId);
+        
+        if (!ourDevice) {
+          throw new Error('Vibify player not found in available devices. Please refresh the page and try again.');
+        }
+        
+        console.log('Device found, transferring playback...');
+        await transferPlayback(deviceId, false);
+        
+        // Wait for transfer to complete
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Retry play
+        await fetchWithAuth(`/me/player/play?device_id=${deviceId}`, {
+          method: 'PUT',
+          body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
+        });
+      } catch (transferError: any) {
+        if (transferError.message?.includes('404')) {
+          throw new Error('Player not ready. Please wait a few seconds and try again, or refresh the page.');
+        }
+        throw transferError;
+      }
+    } else {
+      throw error;
+    }
+  }
 }
 
 export async function pause(deviceId: string): Promise<void> {

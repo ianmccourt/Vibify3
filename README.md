@@ -74,7 +74,7 @@ npm install
    - **App Name**: Vibify (or your preferred name)
    - **App Description**: Personal music sanctuary app
 5. After creating the app, click "Edit Settings"
-6. Add Redirect URI: `http://localhost:5173/callback`
+6. Add Redirect URI: `http://127.0.0.1:5173/callback` (Note: Use IP address, not localhost, due to Spotify API requirements)
 7. Save your settings
 8. Copy your **Client ID** from the app dashboard
 
@@ -90,7 +90,7 @@ cp .env.example .env
 
 ```env
 VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id_here
-VITE_REDIRECT_URI=http://localhost:5173/callback
+VITE_REDIRECT_URI=http://127.0.0.1:5173/callback
 ```
 
 ### 5. Run the Development Server

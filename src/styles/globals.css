@@ -1,6 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-room-warm: #F5E6D3;
+  --color-room-cool: #E8F4F8;
+  --color-room-neon: #1A1A2E;
+  --color-accent-neon-pink: #FF006E;
+  --color-accent-neon-cyan: #00F5FF;
+  
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+}
 
 :root {
   /* Color Variables */

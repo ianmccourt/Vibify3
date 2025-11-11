@@ -61,11 +61,35 @@ export function useSpotifyPlayer() {
       });
 
       // Ready
-      spotifyPlayer.addListener('ready', ({ device_id }) => {
+      spotifyPlayer.addListener('ready', async ({ device_id }) => {
         console.log('Player ready with Device ID:', device_id);
         setDeviceId(device_id);
         setIsReady(true);
         setError(null);
+        
+        // Wait a bit for device to register with Spotify servers
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Transfer playback to this device to activate it
+        try {
+          const { transferPlayback, getAvailableDevices } = await import('../services/spotifyApi');
+          
+          // Check if device is available
+          const devices = await getAvailableDevices();
+          const ourDevice = devices.find(d => d.id === device_id);
+          
+          if (ourDevice) {
+            console.log('Device found in available devices, transferring playback...');
+            await transferPlayback(device_id, false);
+            console.log('✓ Playback transferred to Vibify player');
+          } else {
+            console.log('Device not yet registered with Spotify. It will be activated on first play.');
+          }
+        } catch (err) {
+          console.warn('Could not transfer playback automatically:', err);
+          console.log('Device will be activated on first play.');
+          // Don't set error, as manual play will trigger transfer
+        }
       });
 
       // Not Ready

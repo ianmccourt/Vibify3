@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vibify Debug</title>
+    <script>
+        // Open this in your browser console on the Vibify page
+        console.log('=== VIBIFY DEBUG ===');
+        console.log('Looking for navigation tabs...');
+        
+        const tabs = document.querySelectorAll('button');
+        console.log(`Found ${tabs.length} buttons total`);
+        
+        tabs.forEach((btn, i) => {
+            const text = btn.textContent?.trim();
+            if (text) {
+                const rect = btn.getBoundingClientRect();
+                const isVisible = rect.width > 0 && rect.height > 0;
+                const computedStyle = window.getComputedStyle(btn);
+                console.log(`Button ${i}: "${text}"`);
+                console.log(`  Visible: ${isVisible}, Position: top=${rect.top}px, left=${rect.left}px`);
+                console.log(`  Display: ${computedStyle.display}, Opacity: ${computedStyle.opacity}`);
+            }
+        });
+        
+        console.log('\nLooking for navigation container...');
+        const navContainers = document.querySelectorAll('.fixed');
+        console.log(`Found ${navContainers.length} fixed elements`);
+        
+        navContainers.forEach((el, i) => {
+            const rect = el.getBoundingClientRect();
+            const computedStyle = window.getComputedStyle(el);
+            console.log(`Fixed element ${i}:`);
+            console.log(`  Position: top=${rect.top}px, height=${rect.height}px`);
+            console.log(`  Background: ${computedStyle.background}`);
+            console.log(`  Z-index: ${computedStyle.zIndex}`);
+        });
+    </script>
+</head>
+<body>
+    <h1>Paste this into your browser console on the Vibify page</h1>
+    <pre>
+// Run this in your browser console when on Vibify
+const tabs = document.querySelectorAll('button');
+console.log('Total buttons:', tabs.length);
+tabs.forEach(btn => {
+    const text = btn.textContent?.trim();
+    if (text && text.length < 30) {
+        const rect = btn.getBoundingClientRect();
+        console.log(`"${text}" - top:${rect.top}px, visible:${rect.height > 0}`);
+    }
+});
+    </pre>
+</body>
+</html>
